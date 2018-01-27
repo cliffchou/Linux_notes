@@ -1,0 +1,5 @@
+1.解决Centos7安装后无法联网的问题：
+  1)打开Centos7终端，用root登录（su root 之后输入密码）
+  2)vi ifcfg-ens33 编辑配置文件，修改其中的noboot=no为noboot=yes即可
+    注意：vi之后，默认是命令模式，按i或者insert以及其他编辑键进入编辑模式，按：wq为保存并退出，按esc或ctrl+c退出编辑模式
+  3)service network restart 重启网络服务即可
