@@ -3,3 +3,5 @@
   2)vi ifcfg-ens33 编辑配置文件，修改其中的noboot=no为noboot=yes即可
     注意：vi之后，默认是命令模式，按i或者insert以及其他编辑键进入编辑模式，按：wq为保存并退出，按esc或ctrl+c退出编辑模式
   3)service network restart 重启网络服务即可
+  
+2.linux复制技巧：鼠标双击文件名就可以复制（或者鼠标左键选中要复制内容即可复制），按下鼠标中键即可粘贴其到命令行。
