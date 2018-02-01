@@ -5,3 +5,18 @@
   3)service network restart 重启网络服务即可
   
 2.linux复制技巧：鼠标双击文件名就可以复制（或者鼠标左键选中要复制内容即可复制），按下鼠标中键即可粘贴其到命令行。
+
+3.linux上面安装Google chrome：
+  1) 修改yum源：在 /etc/yum.repos.d/ 目录下新建文件 google-chrome.repo，向其中添加如下内容：
+     [google-chrome]
+     name=google-chrome
+     baseurl=http://dl.google.com/linux/chrome/rpm/stable/$basearch
+     enabled=1
+     gpgcheck=1
+     gpgkey=https://dl-ssl.google.com/linux/linux_signing_key.pub
+  2) 安装（注意是 sudo 开头的命令，不是 yum）
+     sudo yum install google-chrome-stable
+	 
+	 注意：Google官方源在国内可能无法正常访问，导致安装失败或安装后无法正常更新，可以尝试添加--nogpgcheck参数再安装
+	       sudo yum install google-chrome-stable --nogpgcheck
+		   或者可以尝试修改gpgcheck=0再安装
