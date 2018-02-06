@@ -20,3 +20,34 @@
 	 注意：Google官方源在国内可能无法正常访问，导致安装失败或安装后无法正常更新，可以尝试添加--nogpgcheck参数再安装
 	       sudo yum install google-chrome-stable --nogpgcheck
 		   或者可以尝试修改gpgcheck=0再安装
+		   
+4.CentOS7图形界面与命令行界面切换
+  1)在图形界面使用 ctrl+alt+F2切换到dos界面  
+    dos界面 ctrl+alt+F2切换回图形界面
+
+  2)在命令上 输入 init 3 命令 切换到dos界面 
+             输入 init 5命令 切换到图形界面
+
+  3)如果想系统默认以某种方式启动， 使用systemd创建符号链接指向默认运行级别。
+    修改方法为：
+      a.首先删除已经存在的符号链接：rm /etc/systemd/system/default.target 
+      b.默认级别转换为3(文本模式)：ln -sf /lib/systemd/system/multi-user.target /etc/systemd/system/default.target 
+        或者默认级别转换为5(图形模式)：ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target 
+      c.重启：reboot 
+
+  注意：centos7以下的版本 
+        以管理员权限编辑 /etc/inittab
+        把 id:5:initdefault: 改为 id:3:initdefault: 就ok
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
