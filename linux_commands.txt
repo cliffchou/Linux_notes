@@ -550,6 +550,95 @@ Linux is about imagination
    1) :w [filename] 这个:w 命令也可以指定可选的文件名,这个的作用就如 “Save As. . . ”。当该命令以一个新名字保存文件时，它并没有更改你正在编辑的文件的名字。
    2) 在命令模式下，输入 ZZ 就会保存并退出当前文件
    
+15.软件包管理
+   1)软件包查找工具
+     风格     命令
+     Debian   apt-get update; apt-cache search search string
+     Red Hat  yum search search string   
+   
+   2)软件包安装命令
+     风格     命令
+     Debian   apt-get update; apt-get install package name
+     Red Hat  yum install package name
+   
+   3)底层软件包安装命令：从某处而不是资源库中下载一个软件包文件时，可以使用底层工具来直接安装它，不用经过依赖解析
+     风格        命令
+     Debian      dpkg --install package file
+     Red Hat     rpm -i package file
+   
+   4)可以使用上层或底层工具来卸载软件，软件包删除命令
+     风格        命令
+     Debian      apt-get remove package name
+     Red Hat     yum erase package name
+   
+   5)最常见的软件包管理任务是保持系统中的软件包都是最新的，软件包更新命令
+     风格        命令
+     Debian      apt-get update; apt-get upgrade
+     Red Hat     yum update
+   
+   6)用软件包文件来升级软件(如果已经从一个非资源库网站下载了一个软件包的最新版本，可以安装这个版本，用它来替代先前的版本，底层软件包升级命令
+     风格        命令
+     Debian      dpkg --install package file
+     Red Hat     rpm -U package file
+   
+   7)列出所安装的软件包命令
+     风格        命令
+     Debian      dpkg --list
+     Red Hat     rpm -qa
+   
+   8)软件包状态命令，用来显示是否安装了指定的软件包
+     风格        命令
+     Debian      dpkg --status package name
+     Red Hat     rpm -q package name
+   
+   9)查看软件包信息命令，前提是已知所安软件包的名字
+     风格        命令
+     Debian      apt-cache show package name
+     Red Hat     yum info package name
+	 
+   10)查找软件包，确定哪个软件包对所安装的某个特殊文件负责，包文件识别命令
+     风格        命令
+     Debian      dpkg --search file name
+     Red Hat     rpm -qf file name
+	 
+16.管理存储设备的命令
+   • mount –挂载一个文件系统(执行这个不带参数的命令，将会显示一系列当前挂载的文件系统)
+   • umount –卸载一个文件系统(超级用户身份)
+   • fsck –检查和修复一个文件系统
+   • fdisk –分区表控制器(允许我们直接在底层与类似磁盘的设备进行交互)
+   • mkfs –创建文件系统
+   • fdformat –格式化一张软盘
+   • dd —把面向块的数据直接写入设备
+   • genisoimage (mkisofs) –创建一个 ISO 9660 的映像文件
+   • wodim (cdrecord) –把数据写入光存储媒介
+   • md5sum –计算 MD5 检验码
+   
+   1)mount -> 显示列表格式：设备 on 挂载点 type 文件系统类型（可选内容）
+   2)比如卸载一个光盘挂载点：# umount /dev/hdc  
+     注意：当某个用户或者进程正在使用这个设备的话，你就不能卸载一个设备。真要卸载，就是把当前工作目录改到其它目录而不是这个挂载点。
+	  
+     重新装：先创建一个目录(该目录不必为空)        mkdir /mnt/cdrom
+	         把这个CD-ROW 挂载到一个新的挂载点上   mount -t iso9660 /dev/hdc /mnt/cdrom
+                                                         -t 指定文件类型  
+   3)sudo tail -f /var/log/messages 可以实时观察系统的一举一动
+   4)df 列出文件系统的整体磁盘使用量
+     du 检查磁盘空间使用量
+	 fdisk 用于磁盘分区
+   
+   5)使用 fdisk 程序直接在底层与类似磁盘设备进行交互：
+          a)先卸载它 sudo umount /dev/sdb1
+          b)调用 fdisk 程序，注意必须指定设备名称(就整个设备而言，而不是通过分区号)
+          c)输入 m 显示程序菜单，然后输入 p 检查已存在的分区布局(打印这个设备的分区表)，可以看到该设备已有的分区信息		  
+            ==>输入 l 显示可选类型列表(例如 linux 分区类型的ID为83)，然后输入 t 修改分区ID号(只有一个分区的情况下，输入t后再输入新的ID号即可，而多个分区情况下则先进行分区选择，然后再输入新的ID号) 
+          d)至此，所有修改只是储存在内存中，而不是在物理设备中。输入 w 会将修改过的分区表写入此设备，再退出即可。若是直接退出，则直接输入 q 即可，设备并未改变。                                  
+   
+   
+   
+   
+   
+   
+   
+   
    
    
    
