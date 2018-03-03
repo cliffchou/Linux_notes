@@ -54,12 +54,29 @@
 　　4) shutdown -h 10 10分钟后自动关机  
     注意：如果是通过shutdown命令设置关机的话，可以用shutdown -c命令取消重启
 		
+6.解决用户不在sudoers文件中的问题
+  将 /etc/sudoers 文件中找到root ALL=(ALL) ALL 的字段，在下面追加：username ALL=(ALL) ALL，然后保存退出即可。
+  注意该文件若是只读，则修改文件权限先：$chmod 777 /etc/sudoers，记得保存修改后将文件访问权限恢复：$chmod 440 /etc/sudoers  
 		
-		
-		
-		
-		
-		
+7.Centos7安装配置SSH，开启ssh连接		
+  1)确保安装了 openssh-server
+    $yum list installed | grep openssh-server 
+    如果没有任何输出显示表示没有安装，就通过以下命令安装($yum install openssh-server)	  	
+  2)找到 /etc/ssh/ 目录下的sshd服务配置文件 sshd_config, 用Vim编辑器打开，将关于监听端口、监听地址前的#去掉
+    Port 22
+	ListenAddress 0.0.0.0
+	ListenAddress ::
+	PermitRootLogin yes
+	PassworfAuthentication yes
+  3)开启 sshd 服务，输入
+    $sudo service sshd start
+  4)检查 sshd 服务是否正常开启
+    ps -e | grep sshd
+    若输出 sshd 则表示已经开启
+
+    或者输入
+    netstat -an | grep 22
+    检查22号端口是否开启监听	
 		
 		
 		

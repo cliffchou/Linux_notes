@@ -1017,7 +1017,7 @@ Linux is about imagination
 				  [me@linuxbox ~]$ unzip -p ls-etc.zip | less
 
    3)同步文件和目录
-     rsync程序：能快速检测两个目录之间的差异，执行最小量的复制达到目录间的同步   
+     rsync程序：能快速检测两个目录之间的差异，执行最小量的复制达到目录间的同步(只有检查到更改才会复制更新了的文件部分)   
           使用： rsync options source destination
 		  选项：source 和 destination 选自下面内容
 		        • 一个本地文件或目录
@@ -1025,10 +1025,59 @@ Linux is about imagination
 				• 一个远端rsync 服务器，由rsync://[user@]host[:port]/path 指定
 		  注意：rsync不支持远端到远端的复制，其中 source 和 destination 两者之一必是本地文件       
 
+          实例：$rsync -av playground foo 
+		        在foo目录下制作一个 playground 目录的镜像，其中 -a 选项是递归和保护文件属性，-v 选项是冗余输出
+
+          实例：假设一个硬盘挂载在一个 /media/BigDisk 目录下，可以执行一个有用的系统备份
+		        a)首先在外部硬盘上创建一个目录，名为 /backup
+				  $mkdir /media/BigDisk/backup
+				b)然后把 /etc,/home,/usr/local目录从我们的系统中复制到假设的存储设备中
+				  $sudo rsync -av --delete /etc/home /usr/local /media/BigDisk/backup
+				  注意：包含了 –delete 这个选项，来删除可能在备份设备中已经存在但却不再存在于源设备中的文件
+          
+		  作用：挂载外部驱动器，运行 rsync 命令，不断重复这个过程，是一个不错的（虽然不理想）方式来保存少量的系统备份文件
+		  
+		  简化：别名对这个需要反复进行的操作很有帮助，创建一个别名并将它添加进入 .bashrc 文件中去
+		        alias bcakup='sudo rsync -av --delete /etc/home /usr/local /media/BigDisk/backup'
+		        现在要做的就是连接一个外部驱动器，然后运行 backup 命令来完成工作
+		  
+	 ==>应用
+        a)rsync程序被用来在网络间复制文件(rsync中的r象征着remote)，复制有两种方法
+          ==>方法1：要求远程系统安装了rsync程序以及远程shell程序，比如ssh		
+		      实例：[me@linuxbox ~]$ sudo rsync -av --delete --rsh=ssh /etc /home /usr/local remote-sys:/backup
+                    将远程系统替代一个外部驱动器，来执行备份操作。其中，--rsh=ssh选项，指示 rsync 使用 ssh 程序作为它的远程 shell。
+                    如此我们便可以使用一个ssh加密通道，把数据安全传输到远程主机中。同时，我们在目标路径名前加上了主机名字来指定远端主机。
+
+          ==>方法2：使用 rsync 服务器，它可以被配置为一个守护进程，监听即将到来的同步请求。
+
+20.正则表达式
 
 
-
-
+					
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
 				
 	
 	
