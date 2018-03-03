@@ -39,7 +39,6 @@
         以管理员权限编辑 /etc/inittab
         把 id:5:initdefault: 改为 id:3:initdefault: 就ok
 		
-		
 5.Centos7关机、重启命令
   重启：　
     1) reboot
@@ -54,6 +53,10 @@
 　　3) shutdown -h now 立刻关机(root用户使用)
 　　4) shutdown -h 10 10分钟后自动关机  
     注意：如果是通过shutdown命令设置关机的话，可以用shutdown -c命令取消重启
+		
+		
+		
+		
 		
 		
 		
