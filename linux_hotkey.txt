@@ -1,0 +1,17 @@
+1.Ctrl L 清屏
+  
+  Ctrl U光标之前全部删除
+
+  Ctrl K 光标之后全部删除
+
+  Ctrl A 光标移动到行首
+
+  Ctrl E 光标移动到行尾
+
+  Ctrl C 取消  中断
+
+  Ctrl Z 暂停进程（fg命令恢复）jobs打印后台暂停的工作
+
+  Ctrl S 锁定屏幕（Ctrl Q命令恢复）
+
+2.

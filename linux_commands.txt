@@ -1300,24 +1300,40 @@ Linux is about imagination
             -u       只是输出独有的文本行。这是默认的。
 			
    3)切片和切块
-                
+     ==>cut程序：被用来从文本行中抽取文本，并把其输出到标准输出，它能够接受多个文件参数或者标准输入           
+		   选项：选项          说明
+                 -c char_list  从文本行中抽取由 char_list 定义的文本。这个列表可能由一个或多个逗号分隔开的数值区间组成。
+                 -f field_list 从文本行中抽取一个或多个由 field_list 定义的字段(如同上面的 -k 选项一样，指定一个字段区域)。这个列表可能包括一个或多个字段，或由逗号分隔开的字段区间。
+                 -d delim char 当指定 -f 选项之后，使用 delim_char 做为字段分隔符。默认情况下，字段之间必须由单个 tab 字符分隔开。
+                 --complement  抽取整个文本行，除了那些由 -c 和／或 -f 选项指定的文本
+		   
+		   例如：$cut -f 3 dirtros.txt   其中distros.txt文本中由tab作为界定符
+		         一个由tab分离的文件，每行不太可能包含一样的字符数，因此cut最好是抽取字段(计算每行中字符位置有点困难)
+			    
+				 $ cut -f 3 distros.txt | cut -c 7-10
+				 由于日期长度相同，因此我们可以用cut来抽取字符(或一个区域内的字符)，注意这里抽取对应区域字符的表示(7-10)
+				 注意：cut抽取字符不影响原文件内容
 			
+			    $expand distros.txt | cut -c 23-
+				使用expand来处理文本，我们可以直接用 cut -c 命令来从文件中抽取任意区间内的字符
+		   
+		   拓展：expand，把文件中的界定符 tab 用空格代替。它既可以接受一个或多个文件参数，也可以接受标准输入，并且把修改过的文本送到标准输出
 			
+		   例如：$cut -d ':' -f 1 /etc/passwd | head
+                 指定 ：作为字段分隔符，而不是tab	   
 			
+	 ==>paste程序：它会添加一个或多个文本列到文件中，而不是从文件中抽取文本列。paste 接受多个文件参数和／或标准输入。
+			 实例：$ sort -k 3.7nbr -k 3.1nbr -k 3.4nbr distros.txt > distros-by-date.txt
+			       产生一个按照日期排序的发行版列表(排序规则是年、月、日)，并把结果存储在一个叫做 distros-by-date.txt 的文件中
 			
+			       $ cut -f 1,2 distros-by-date.txt > distros-versions.txt
+                   $ head distros-versions.txt				   
+			       使用 cut 命令从文件中抽取前两个字段（发行版名字和版本号），并把结果存储到一个名为 distro-versions.txt 的文件中
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+			       $ paste distros-dates.txt distros-versions.txt
+				   
+	 ==>join程序：在关系型数据库中，将来自多个享有共同关键域的表格数据结合起来，得到一个期望的结果
+            	 
 			
 			
 			
