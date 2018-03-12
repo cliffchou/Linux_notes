@@ -1,0 +1,116 @@
+Centos7 yum、rpm命令大全
+
+rpm命令
+
+rpm包，由“-”、“.”构成，包名、版本信息、版本号、运行平台
+
+对已安装软件信息的查询
+
+rpm -qa 查询已安装的软件
+
+rpm -qf 文件名绝对路径 文件名的绝对路径
+
+rpm -ql 软件名 查询已安装的软件包都安装到何处
+
+软件名：rpm包去除平台信息和后缀信息
+1
+2
+rpm -qi 软件名 查询一个已安装软件包的信息
+
+rpm -qc 软件名 查看已安装软件的配置文件
+
+rpm -qd 软件名 查看已安装软件的文档安装位置
+
+rpm -qR 软件名 查看已安装软件依赖包和文件
+
+对未安装软件信息的查询
+
+rpm -qpi rpm文件 查看一个软件包的用途和版本信息
+
+rpm -qpl rpm文件 查看一个软件包所包含的文件
+
+rpm -qpd rpm文件 查看软件包的文档所在位置
+
+rpm -qpc rpm文件 查看软件包的配置文件
+
+rpm -qpR rpm文件 查看软件包的依赖关系
+
+软件包的安装、升级、删除
+
+rpm -ivh rpm文件 安装rpm包
+
+rpm -Uvh rpm文件 更新rpm包
+
+rpm -e 软件名 删除rpm包
+
+rpm -e 软件名 –nodeps 不管依赖关系，强制删除软件
+
+rpm –import 签名文件 导入签名
+
+rpm --import RPM-GPG-KEY
+1
+2
+yum命令
+
+yum= yellow dog updater, modified 主要功能更方便添加、删除、更新rpm包，自动解决依赖性问题，便于管理大量系统的更新问题
+
+同时配置多个资源库（repository）简介的配置文件（/etc/yum.conf自动解决增加或删除rpm包时遇到的依赖性问题，方便保持rpm数据库的一致性）
+
+yum安装，rpm -ivh yum-*.noarch.rpm在第一次启用yum之前要先导入系统的RPM-GPG-KEY
+
+第一次使用yum管理软件时，yum会自动下载需要的headers放置在/var/cache/yum目录下
+
+rpm包更新
+
+yum check-update 查看可以更新的软件包
+
+yum update 更新所有的软件包
+
+yum update kernel 更新指定的软件包
+
+yum upgrade 大规模更新升级
+
+rpm包安装和删除
+
+yum install xxx[服务名] 安装rpm包
+
+yum remove xxx[服务名] 删除rpm包
+
+yum缓存信息
+
+yum clean packages 清除缓存的rpm包文件
+
+yum clean headers 清除缓存的rpm头文件
+
+yum clean old headers 清除缓存中旧的头文件
+
+yum clean all 清除缓存中旧的rpm头文件和包文件
+
+查询软件包信息
+
+yum list 列出资源库中所有可以安装或更新的rpm包
+
+yum list firefox* 列出资源库中可以安装、可以更新、已安装的指定rpm包
+
+yum list update 列出资源库中可以更新的rpm包
+
+yum list installed 列出所有已安装的rpm包
+
+yum list extras 列出已安装但不包含在资源库中rpm包
+
+ps：通过网站下载安装的rpm包
+1
+2
+yum info 列出资源库中所有可以安装或更新的rpm包信息
+
+yum info firefox* 列出资源库可以安装或更新的指定的rpm的信息
+
+yum info update 列出资源库中可以更新的rpm包信息
+
+yum info installed 列出已安装的所有rpm包信息
+
+yum info extras 列出已安装到时不包含在资源库中rpm包信息
+
+yum search firefox 搜索匹配特定字符的rpm包
+
+yum provides firefox 搜索包含特定文件的rpm包
