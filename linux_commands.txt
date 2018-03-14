@@ -1470,11 +1470,26 @@ Linux is about imagination
                     错误：No word lists can be found for the language "zh_CN"???尚未解决啊。。。
 
 22.格式化输出
-    				
-				 
-				 
-				 
-				 
+    1)nl程序：添加行号，相当于 cat -n，能接受多个文件作为命令行参数，也能标准输出
+      $ nl distros.txt | head
+   
+      选项：-b style  按要求的方式数行，其中 a = 数所有行，t = 数非空行，n = 无，pregexp = 只数那些匹配了正则表达式的行
+            -f style  将footer按要求设置参数，默认是无
+            -h style  将header按要求设置参数，默认是无			
+			-i number 将页面增加量设置为数字，默认是1
+            -n format 设置数数的格式，格式是 ln = 左偏，没有前导0；rn = 右偏，没有前导0；rz = 右偏，有前导0
+            -s string 在每一行的末尾加字符作为分割符，默认是单个的tab
+            -w width 设置每一行的宽度，也即是距离左边界的距离			
+				
+    2)fold程序：限制文件行宽(装不下的换一行显示)，接受一个或多个文件以及标准输入。如果没有字符设置，则默认是80
+      $echo "THe quick brown fox jumped over the lazy dog"	| fold -w 12
+       其中，-w 选项将echo命令发送的文本分解成块了。这里设置行宽为12个字符，不会因为单词边界而不会分解它。除非你加上了
+       -s选项，让fold分解碰到需要分解单词的地方用空格代替，单词直接移到下一行
+      $$echo "THe quick brown fox jumped over the lazy dog"	| fold -w 12 -s	   
+		
+     注意：折叠是将文本的行限制到特定的宽度的过程
+	 
+    3)fmt程序：文本格式器，同样可以折叠文本，接受文本和标准输入，并且在文本流上执行段落格式				 
 				 
 				 
 				 
