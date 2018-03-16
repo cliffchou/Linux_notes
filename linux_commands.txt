@@ -47,6 +47,8 @@
   • rm —删除文件和目录（rm是常用的命令，该命令的功能为删除一个目录中的一个或多个文件或目录，它也可以将某个目录及其下的所有文件及子目录均删除。对于链接文件，只是删除了链接，原有文件均保持不变）
   • ln —创建硬链接和符号链接（ln file link 创建硬链接；ln -s item link 创建软链接，item可以是一个文件或是一个目录）
 
+  注意：cp 不能给将一个变量的值赋给另外一个变量(如 foo="foo.txt" fool="fool.txt" cp $foo $fool，然而两变量内容并没有变，并不能达到预期赋值目的)
+  
 ===>>
 ===>>
 
@@ -428,6 +430,11 @@ Linux is about imagination
    注意：输入命令控制是在命令模式下，先输入 : ，然后输入相应的命令即可;
          如果你在 vi 中“迷失”了，试着按下 Esc 键两次来找到路（回到普通模式）;
 
+    ==>拓展：:w  保存文件但不退出vi
+             :w  file 将修改另存为file中，不退出vi
+             :w! 强制保存，不退出vi
+             :e! 放弃所有修改，从上次保存文件开始再编辑			 
+		 
 ==>与 less 阅读器共享的移动命令(区分大小写，比如 G 就得大写)
    按键     	移动光标
    l or 		右箭头 向右移动一个字符
@@ -1538,15 +1545,196 @@ Linux is about imagination
 		   系统管理员使用的脚本放在 /usr/local/sbin
 		   本地支持的软件，不管是脚本还是编译过的程序，都应该放到 /usr/local 目录下，而不是在/bin 或/usr/bin 目录下	 
 				 
+   4)行继续符：反斜杠+回车符 
+     
+     配置vim：:syntax on 打开语法高亮(必须安装完整版的vim，并且你编辑的文件必须有一个 shebang 来说明该文件是一个 shell 脚本)
+	          :set syntax=sh 上述命令不通，用这个试试。
+              
+			  :set hlsearch 高亮查找结果，比如查找单词 "echo"，则设置该选项后该单词的每个实例均会高亮 	 
 				 
+			  :set tabstop=4 设置一个tab字符所占据的列数，默认是8列(注意 = 后面直接接数字，没有空格)
+
+              :set autoindent 打开 “auto indent” 功能，让vim能对新的文本行缩进与刚输入的文本行相同的列数			  
 				 
+25.编写一个"报告生成器"的项目：显示系统的各种统计数据和它的状态，并产生 HTML 格式的报告
+   1)第一阶段：产生一个很小的HTML文档(.html)，可以通过浏览器访问该文档
+			   ==>HTML文档格式
+					<HTML>
+						<HEAD>
+							<TITLE>Page Title</TITLE>
+						</HEAD>
+						<BODY>
+							Page body.
+						</BODY>
+					</HTML>
+			
+			   将这个 HTML 文档输出到标准输出，通过一个程序完成(脚本文件)
+			   ==>首先创建一个 ~/bin/sys_info_page 的新文件(如果行不通吗，就先创建一个bin目录，然后在创建一个程序sys_info_page文件，然后移到bin目录下)
+					$vim ~/bin/sys_info_page
+					或者
+					$mkdir bin
+					$vim sys_info_page
+					$mv sys_info_page bin
+				  然后修改该脚本文件的权限，方可执行该脚本文件
+				    $chmod 755 ~/bin/sys_info_page
+				  执行该脚本文件($ sys_info_page)，发现输出了我们编写的HTML文档
+			   ==>输出重定向到一个html文件
+			        $sys_info_page > sys_info_page.html
+				  通过火狐浏览器进行访问
+				    $firefox sys_info_page.html
+				    
+			   其中，脚本文件为：
+				#!/bin/bash
+				# Program to output a system information page
+				echo "<HTML>"
+				echo " <HEAD>"
+				echo " <TITLE>Page Title</TITLE>"
+				echo " </HEAD>"
+				echo " <BODY>"
+				echo " Page body."
+				echo " </BODY>"
+				echo "</HTML>"
+				
+				或者简化一下，将多个 echo 命令结合成一个 echo 命令，shell 会持续读取引号中的文本内容，直到遇到了右引号
+				#!/bin/bash
+				# Program to output a system information page
+				echo "<HTML>
+				<HEAD>
+				<TITLE>Page Title</TITLE>
+				</HEAD>
+				<BODY>
+				Page body.
+				</BODY>
+				</HTML>"
+				
+   2)添加一些数据：添加一些数据到上述html文档中
+					#!/bin/bash
+					# Program to output a system information page
+					echo "<HTML>
+					<HEAD>
+					<TITLE>System Information Report</TITLE>
+					</HEAD>
+					<BODY>
+					<H1>System Information Report</H1>
+					</BODY>
+					</HTML>"
+                  我们添加了一个网页标题，并且在报告正文部分加了一个标题
+			 注意：如果我们的HTML文件中包含了 US-ASCII 范围外的字符，那么该文件在某些浏览器中会呈现出乱码现象，因此我们必须在文档或者传输协议层声明页面的字符编码。
+			       
+			
+   3)变量和常量：针对多次重复出现的量，我们通过定义一个变量或者常量来代替
+                    #!/bin/bash
+					# Program to output a system information page
+					title="System Information Report"   #title是个变量，将等号右边的字符串赋给它，然后利用**参数展开**功能，将字符串放到文件中多个位置
+					echo "<HTML>
+					<HEAD>
+					<TITLE>$title</TITLE>
+					</HEAD>
+					<BODY>
+					<H1>$title</H1>
+					</BODY>
+					</HTML>" 
+		    注意：shell中创建变量是自动的，我们只管使用它，当 shell 碰到一个变量的时候，它会自动地创建它。
+				  因此，当你随便写一个不存在的变量时，shell将会创建它，然后赋空值，因此每次使用已经定义的变量，不要拼写错了。
+				  
+			查看变量命令：echo $variable_name
+			
+		变量命名：变量名可由字母数字字符（字母和数字）和下划线字符组成;
+				  变量名的第一个字符必须是一个字母或一个下划线;
+				  变量名中不允许出现空格和标点符号
 				 
-				 
-				 
-				 
-				 
-				 
-				 
+		    注意：shell不能辨别常量和变量，惯例是指定大写字母来表示常量，小写字母来表示真正的变量。因此二者并没有特别明显的区别，除非通过使用带有 -r(只读) 选项的
+                  内部命令declare，来强制常量不变性，即 declare -r TITLE="Page Title"，那么shell会阻止之后所有给TITLE的赋值操作。			
+			
+	    赋值操作：variable=value
+                  shell不会在乎变量值的类型，它把它们都看作是字符串。通过使用带有 -i 选项的declare命令，可以强制shell把赋值类型限定为整形。		
+			     
+				  可以在同一行中对多个变量赋值
+				  a5 b="a string"
+			
+			注意：在赋值过程中，变量名、等号和变量值之间必须没有空格。
+			      在参数展开过程中，变量名有可能被花括号 "{}" 包围着，因为变量名周围的上下文情况不明，因此用 {} 保证其变量独立。
+				  
+   4)创建日期、时间以及用户名到上述报告文档中			
+			#!/bin/bash
+			# Program to output a system information page
+			TITLE="System Information Report For $HOSTNAME"
+			CURRENT_TIME=$(date +"%x %r %Z")
+			TIME_STAMP="Generated $CURRENT_TIME, by $USER"
+			echo "<HTML>
+			<HEAD>
+			<TITLE>$TITLE</TITLE>
+			</HEAD>
+			<BODY>
+			<H1>$TITLE</H1>
+			<P>$TIME_STAMP</P>
+			</BODY>
+			</HTML>"
+			
+   5)文本输入方法：除了 echo 之外，还有 here document 或 here script 
+                   我们把正文文本嵌入脚本文件，然后把它送到一个命令的标准输入	
+			 格式：command << token 
+			       text 
+				   token       #注意 token ***必须在一行中单独出现，并且文本行中没有末尾的空格***，一般用 _EOF_ 作为token。
+				   其中，command 是一个可以接受标准输入的命令名，token 是用来指示嵌入文本结束的字符串(结尾标记)
+			
+			 注意：如果将 << 改成 <<-，那么shell会忽略该 here document 中开头的 tab 字符，如此可以缩进一个 here document，提高脚本可读性。
+				   默认下，here documents 中的单引号和双引号会失去它们在shell中的特殊含义
+			        $foo="some text"
+					$cat << _EOF_
+					> $foo
+					> "$foo"
+					> '$foo'
+					> \$foo
+					> _EOF_
+					
+					输出
+					some text
+					"some text"
+					'some text'
+					$foo
+		     优点：	可以看到，shell根本没有注意到引号，把它们只是看作普通字符，因此我们可以在一个 here document 中可以随意的嵌入引号。
+					同时，here documents 可以和任意能接受标准输入的命令一块使用
+			  
+			 利用 here document 来修改上述的脚本文件(取代 echo 命令)：
+			       ...
+				   cat << _EOF_
+				   <HTML>
+						<HEAD>
+							<TITLE>$TITLE</TITLE>
+						</HEAD>
+						
+						<BODY>
+							<H1>$TITLE</H1>
+							<P>$TIME_STAMP</P>
+						</BODY>
+				   </HTML>
+				   _EOF_   #注意token必须单独在一行中出现，而且不准有末尾空格
+				   
+			 实例：here documents 可以和任意能接受标准输入的命令一块使用，这里利用它将一系列命令传递到 ftp 程序中	   
+				   
+			 ==>vim中显示行号： :set number
+                     关闭行号： :set nonumber			 		
+			
+26.自定向下的设计
+   			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			
 			
 			
