@@ -1575,7 +1575,7 @@ Linux is about imagination
 					$mkdir bin
 					$vim sys_info_page
 					$mv sys_info_page bin
-				  然后修改该脚本文件的权限，方可执行该脚本文件
+				  然后修改该脚本文件的权限(755)，方可执行该脚本文件
 				    $chmod 755 ~/bin/sys_info_page
 				  执行该脚本文件($ sys_info_page)，发现输出了我们编写的HTML文档
 			   ==>输出重定向到一个html文件
@@ -1717,13 +1717,43 @@ Linux is about imagination
                      关闭行号： :set nonumber			 		
 			
 26.自定向下的设计
-   			
+   1)定义和使用局部变量：在变量名前加 local 来定义局部变量
+		#!/bin/bash
+		# local-vars: script to demonstrate local variables
+		foo=0 # global variable foo
+		funct_1 () {
+		local foo # variable foo local to funct_1
+		foo=1
+		echo "funct_1: foo = $foo"
+		}
+		funct_2 () {
+		local foo # variable foo local to funct_2
+		foo=2
+		echo "funct_2: foo = $foo"
+		}
+		echo "global: foo = $foo"
+		funct_1
+		echo "global: foo = $foo"
+		funct_2
+		echo "global: foo = $foo"	
+		
+        ==>运行结果：global: foo = 0
+					 funct_1: foo = 1
+					 global: foo = 0
+					 funct_2: foo = 2
+					 global: foo = 0		
+	    注意：函数里面的 echo 只有调用该函数时才会起到输出作用，类似java中的 print 函数		
 			
-			
-			
-			
-			
-			
+27.流程控制
+   1)if分支结构	
+		x=5
+		if [ $x = 5 ]; then
+		echo "x equals 5."
+		else
+		echo "x does not equal 5."
+		fi
+	 注意：if语句里的条件是写在两个中括号之间的，即 [ $x = 5 ]，而且必须用空格隔开，否则报错(如 [$x=5] 便错了)。
+           同时注意if条件语句用 fi 结尾(另起一行)。	 
 			
 			
 			
