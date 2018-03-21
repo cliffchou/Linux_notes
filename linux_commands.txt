@@ -1744,7 +1744,7 @@ Linux is about imagination
 					 global: foo = 0		
 	    注意：函数里面的 echo 只有调用该函数时才会起到输出作用，类似java中的 print 函数		
 			
-27.流程控制
+27.流程控制--if
    1)if分支结构	
 		x=5
 		if [ $x = 5 ]; then
@@ -1755,6 +1755,113 @@ Linux is about imagination
 	 注意：if语句里的条件是写在两个中括号之间的，即 [ $x = 5 ]，而且必须用空格隔开，否则报错(如 [$x=5] 便错了)。
            同时注意if条件语句用 fi 结尾(另起一行)。	 
 			
+		   当if语句后面跟随了多条命令时，将会计算命令列表中最后一个命令
+		   例如：if false; true; then echo "it is true."; fi   ====> it is true.
+			
+	 语法：if commands; then
+				commands
+			[elif commands; then
+					commands...]
+			[else
+					commands]
+			fi
+			
+	 拓展：命令执行完，其会给系统发送一个值(称为退出状态，范围是0~255，0表示成功，其它任何值表示失败)，我们可以用shell提供的参数来检查其退出状态
+           $echo $?           #当执行完命令后可以用该参数来查看命令执行情况	 
+	
+	2)测试命令：test expression  或  [ expression ]，常与 if 语句一起使用
+	==>文件表达式：用来计算文件状态(表达式即是expression)
+	  表达式              如果为真
+	  file1 -ef file2     file1 和 file2 拥有相同的索引号
+  	  file1 -nt file2     file1 新于 file2
+	  file1 -ot file2     file1 早于 file2	
+	  -b file             file 存在并且是一个块（设备）文件	
+	  -c file             file 存在并且是一个字符（设备）文件		
+	  -d file             file 存在并且是一个目录	
+	  -e file             file 存在		
+	  -f file             file 存在并且是一个普通文件	
+	  -g file             file 存在并且设置了组 ID	
+	  -G file             file 存在并且由有效组 ID 拥有		
+	  -k file             file 存在并且设置了它的“sticky bit”		
+	  -L file             file 存在并且是一个符号链接		
+	  -O file             file 存在并且由有效用户 ID 拥有	
+      -p file             file 存在并且是一个命名管道
+      -r file             file 存在并且可读（有效用户有可读权限）
+      -s file             file 存在且其长度大于零
+      -S file             file 存在且是一个网络 socket
+      -t fd               fd 是一个定向到终端／从终端定向的文件描述符。这可以被用来决定是否重定向了标准输入／输出错误。
+      -u file             file 存在并且设置了 setuid 位
+      -w file             file 存在并且可写（有效用户拥有可写权限）
+      -x file             file 存在并且可执行（有效用户有执行／搜索权限）
+	  
+	  例如：$[ -d temp ] || mkdir temp
+			检测目录temp是否存在，并且只有测试失败之后才会创建该目录
+	  
+	 ==>字符串表达式
+		表达式              如果为真...
+        string              string 不为 null。
+        -n string           字符串 string 的长度大于零。
+        -z string           字符串 string 的长度为零。
+        string1 = string2
+        string1 == string2  string1 和 string2 相同. 单或双等号都可以，不过双等号更受欢迎。
+        string1 != string2  string1 和 string2 不相同。
+		string1 > string2   sting1 排列在 string2 之后。
+        string1 < string2   string1 排列在 string2 之前
+	 
+     ==>整形表达式
+		表达式                  如果为真...
+        integer1 -eq integer2   integer1 等于 integer2.
+		integer1 -ne integer2   integer1 不等于 integer2.
+		integer1 -le integer2   integer1 小于或等于 integer2.
+		integer1 -lt integer2   integer1 小于 integer2.
+		integer1 -ge integer2   integer1 大于或等于 integer2.
+		integer1 -gt integer2   integer1 大于 integer2.
+		
+	 加强版测试命令：[[ expression ]]  #注意使用这些命令的时候一定要注意命令内前后是有一个空格的
+					 该命令支持所有的表达式，而且增加了一个新的字符串表达式 
+					 string1 = ~ regex
+					 倘若string1匹配到了正则表达式，则返回值为真，为执行比如数据验证等任务提供了许多可能性
+					
+					 [[ ]] 添加的另一个功能是 == 操作符支持类型匹配，正如路径名展开所做的那样
+					 $FILE=foo.bar
+					 $if [[ $FILE == foo.* ]]; then
+					 > echo "$FILE matches pattern 'foo.*'"
+					 >fi
+
+	3) (())：用来执行算术真假测试，如果算术计算结果为非零值，则其测试值为真。倘若没有该命令，那么整数的真假测试比较麻烦(如 if [ $INT -eq 0 ]; then...，现在直接 if((INT == 0))...)
+	   注意：我们使用小于和大于符号，以及 == 用来测试是否相等
+
+	4)逻辑操作符：&& || ! 分别表示与、或、非(于 test 和 [[]] 中)
+	  其中，&& 和 || 是两种bash支持的可执行分支任务的控制操作符，如同 [[]] 中的逻辑操作符
+	  ==>语法：command1 && command2  #先执行command1，当且仅当command1执行成功后，才会执行command2
+			   command1 || command2  #先执行command2，当且仅当command1执行失败后，才会执行command2
+	
+28.读取键盘输入
+	1)read [-options] [variable...] 从标准输入读取数值(单行数据)，可以用来读取键盘输入，当使用重定向的时候，可以读取文件中的一行数据
+	  其中，variable 是用来存储输入数值的一个或多个变量名。如果没有提供变量名， shell 变量 REPLY 会包含数据行
+	 
+	  例如：echo -n "Please enter an integer -> "   #其中 -n 选项会删除结果末尾的换行符
+			read int
+
+      read 可以给多个变量赋值
+	  例如:echo -n "Enter one or more values > "
+		   read var1 var2 var3 var4 var5
+
+	  注意：如果read命令接受到的变量值数目少于期望的数字，那么额外的变量值为空，如果输入的值的数目多于期望的数字，那么多余的输入会被包含到最后一个变量中
+	  
+      read支持选项：
+	  选项 			  说明
+	  -a array        把输入赋值到数组 array 中，从**零索引号**开始。
+	  -d delimiter    用字符串 delimiter 中的第一个字符指示输入结束，而不是一个换行符。
+      -e              使用 Readline 来处理输入。这允许使用与命令行相同的方式来编辑输入。
+      -n num          读取 num 个输入字符，而不是整行。
+      -p prompt       使用字符串 prompt 来为输入显示一个提示信息。
+      -r Raw mode.    不把反斜杠字符解释为转义字符。
+      -s Silent mode. 不会在屏幕上显示输入的字符。当输入密码和其它确认信息的时候，这会很有帮助。
+      -t seconds      超时终止(几秒钟后终止输入)。若输入超时，read 会返回一个非零退出状态。
+      -u fd           使用文件描述符 fd 中的输入，而不是标准输入。
+			
+	  实例：
 			
 			
 			
@@ -1771,6 +1878,24 @@ Linux is about imagination
 			
 			
 			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		
 			
 			
 			
