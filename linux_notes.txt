@@ -97,9 +97,17 @@
                  $vim /etc/vimrc
 				 只需要在行首或者行尾新建一行写入 set number 即可，wq保存即可(权限不够就先修改权限为 777，修改完毕后记得改回权限 644)
 
+10.清空vim文本内容
+		:.,$d + 回车
 
+11.配置vim：:syntax on 打开语法高亮(必须安装完整版的vim，并且你编辑的文件必须有一个 shebang 来说明该文件是一个 shell 脚本)
+			:set syntax=sh 上述命令不通，用这个试试。
+		  
+			:set hlsearch 高亮查找结果，比如查找单词 "echo"，则设置该选项后该单词的每个实例均会高亮 	 
+			 
+			:set tabstop=4 设置一个tab字符所占据的列数，默认是8列(注意 = 后面直接接数字，没有空格)
 
-
+			:set autoindent 打开 “auto indent” 功能，让vim能对新的文本行缩进与刚输入的文本行相同的列数
 
 
 

@@ -480,8 +480,8 @@ Linux is about imagination
    注意：1)真正的 vi 只是支持单层面的 undo 命令，而 vim 则支持多个层面的
          2)d 命令其实是“剪切”了文本
    
-   拓展：清空vim文本内容，非插入模式下
-         :.,$d + 回车
+   拓展：清空vim文本内容
+			:.,$d + 回车
    
 ==>剪切、复制、粘贴命令
    剪切命令(也为删除命令)：
@@ -1858,30 +1858,74 @@ Linux is about imagination
       -p prompt       使用字符串 prompt 来为输入显示一个提示信息。
       -r Raw mode.    不把反斜杠字符解释为转义字符。
       -s Silent mode. 不会在屏幕上显示输入的字符。当输入密码和其它确认信息的时候，这会很有帮助。
-      -t seconds      超时终止(几秒钟后终止输入)。若输入超时，read 会返回一个非零退出状态。
+      -t seconds      超时终止(几秒钟后终止输入)。若输入超时，read 会返回一个非零退出状态(即错误状态)。
       -u fd           使用文件描述符 fd 中的输入，而不是标准输入。
 			
-	  实例：
+	  实例：1)read -p "Enter one or more values > "
+			  echo "REPLY = ‘$REPLY'"
+			  通过 -p 给输入提供相应提示符
+			  
+			2)if read -t 10 -sp "Enter secret pass phrase > " secret_pass; then
+					echo -e "\nSecret pass phrase = '$secret_pass'"
+			  else
+					echo -e "\nInput timed out" >&2
+					exit 1
+			  fi
+			  限定10s内输入一行不可视的字符到变量 secret_pass 中，如果成功输入便输出该变量内容，如果超时则返回超时提示并且
+			  返回一非零退出状态(exit 1)，可以用 $echo $? 进行查看
 			
+	2)_IFS_：内部字符分隔符，控制输入字段的分离，默认值包含一个空格、tab、一个换行符
+	   实例：用冒号分割 /etc/passwd 中的内容
+			 FILE=/etc/passwd
+			 read -p "Enter a user name > " user_name
+			 file_info=$(grep "^$user_name:" $FILE)
+			 if [ -n "$file_info" ]; then	
+				IFS=":" read user pw uid pid name home shell <<< "$file_info"   #其中IFS的赋值会为紧接着的 read 命令更改环境变量，不过这种改变是暂时的，只发生在命令存在期间。
+				echo "User = '$user'"
+				echo "UID = '$uid'"
+				echo "GID = '$gid'"
+				echo "Full Name = '$name'"
+				echo "Home Dir. = '$home'"
+				echo "Shell = '$shell'"
+			 else
+				echo "No such user '$user_name'" >&2
+				exit 1
+			 fi
+	   其中，grep 命令使用的正则表达式确保用户名只会在 /etc/passwd 文件中匹配一个文本行，然后将 grep 命令的输出结果赋值给 file_info 变量。
+		     IFS 语句由三部分组成：一个赋值变量，
+								   一个带有一串参数的read命令，
+								   一个重定向操作符(<<<)
+			 上述IFS语句过程是：先存储IFS 的值($OLD_IFS)，然后赋给一个新值(:)，再执行read 命令(read)，最后把IFS 恢复原值(IFS="$OLD_IFS") 
+			 等效于：OLD_IFS="$IFS"
+					 IFS=":"
+					 read user pw uid gid name home shell <<< "$file_info"
+					 IFS="$OLD_IFS"
+			 注意：为什么要像上面这样麻烦地用到输出重定向，因为不能管道 read，也即是以下命令时错误的
+				   echo "foo" | read   错误示例
+				   
+29.循环
+	1)while 格式：while commands; do commands; done
+	               和 if 一样，while胡计算一系列命令的退出状态，一旦退出状态为零，则继续执行循环内的命令
+	2)跳出循环：break	  立即终止一个循环
+				continue  跳过循环中剩余语句，程序继续执行下一次循环 		
+	3)until 格式：当遇到非零退出状态时，while会退出循环，但是 until 不会，继续执行直到遇到一个零退出状态		
+			实例：count=1
+				  until [ $count -gt 5 ]; do
+					echo $count
+					count=$((count + 1))
+				  done
+				  echo "Finished."
+	
+30.常见脚本错误
+	1)语法错误：丢失引号、忘记补全一个符合命令(比如没有加if命令中的测试命令之后的分号)、不合适的展开、逻辑错误
+		  注意：= 操作符是一个二元操作符，它要求每一边都有一个数值(" "是不行的，要是数值)，如果一边缺失则会产生错误	
 			
+	2)防错编程：仔细计算脚本所使用的程序和命令的退出状态		
 			
+	Design is a function of time		
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+	拓展：>&2 即 1>&2 也就是把结果输出到和标准错误一样；之前如果有定义标准错误重定向到某log文件，那么标准输出也重定向到这个log文件
+			  如：ls 2>a1 >&2（等同 ls >a1 2>&1）把标准输出和标准错误都重定向到a1，终端上看不到任何信息。		
 			
 			
 			
