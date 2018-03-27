@@ -109,7 +109,8 @@
 
 			:set autoindent 打开 “auto indent” 功能，让vim能对新的文本行缩进与刚输入的文本行相同的列数
 
-
+12.执行脚本时报错：bash: /home/cliffchou/bin/test_case: bin/bash: 坏的解释器: 没有那个文件或目录
+   问题：#!/bin/bash 写的有问题
 
 				 
 				 

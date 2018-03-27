@@ -1924,19 +1924,56 @@ Linux is about imagination
 			
 	Design is a function of time		
 			
-	拓展：>&2 即 1>&2 也就是把结果输出到和标准错误一样；之前如果有定义标准错误重定向到某log文件，那么标准输出也重定向到这个log文件
+	拓展：>&2 即 1>&2 也就是把结果输出到和标准错误一样。之前如果有定义标准错误重定向到某log文件，那么标准输出也重定向到这个log文件
 			  如：ls 2>a1 >&2（等同 ls >a1 2>&1）把标准输出和标准错误都重定向到a1，终端上看不到任何信息。		
 			
+    3)追踪(tracing)：查看真实的程序流
+					一种方法即是在脚本中添加可以显示程序执行位置的提示性信息；
+					一种方法是bash提供的，通过在第一个语句 #!/bin/bash 添加一个 -x 选项即可追踪整个脚本：#!/bin/bash -x
+					                   ==>其中加号是追踪输出的默认字符，在 PS4 shell变量中，我们可以调整该变量值改变提示信息：export PS4='$LINENO + '  加单引号是为了防止变量展开，如此可以让其包含脚本中追踪执行到的当前行行号
+                    一种方法也是bash提供的，使用 set 命令加上 -x 选项，为脚本中某一特定区域(并非整个区域)启用追踪：set -x  # Turn on tracing  ... set +x  # Turn off tracing                     										  
+			                           ==>+x 选项关闭追踪，-x选项启动追踪
+			   注意：追踪生效后可以发现，脚本命令是展开之后才开始执行的
+			   
+31.流程控制--case分支(专为多选决策提供的一种流程控制机制)
+	1)语法规则：case variable in 
+					[pattern [| pattern]...) commands ;;]...
+				esac
+	   注意：case 命令会检查一个变量值，然后试图去匹配其中一个具体的模式，当模式匹配后，就会执行与该模式相关联的命令，匹配其中一个具体的模式。
+	   
+       实例：case $REPLY in
+				0) echo "Program terminated."
+					exit
+					;;
+				1) echo "Hostname: $HOSTNAME"
+					uptime
+					;;
+				2) df -h
+					;;
+				3) if [[ $(id -u) -eq 0 ]]; then
+						echo "Home Space Utilization (All Users)"
+						du -sh /home/*
+					else
+						echo "Home Space Utilization ($USER)"
+						du -sh $HOME
+					fi
+					;;
+				*) echo "Invalid entry" >&2
+					exit 1
+					;;
+			 esac	   
 			
+	   注意：case语句中使用的模式和路径展开中使用的那些是一样的，这里的模式是以一个 ")" 为终止符	
 			
-			
-			
-			
-			
-			
-			
-			
-			
+	2)常见模式
+	  模式 		   描述
+	  a)           若单词为“a”，则匹配
+      [[:alpha:]]) 若单词是一个字母字符，则匹配
+      ???)         若单词只有 3 个字符，则匹配
+      *.txt)       若单词以“.txt”字符结尾，则匹配
+      *)           匹配任意单词。把这个模式做为 case 命令的最后一个模式，是一个很好的做法，可以捕捉到任意一个与先前模式不匹配的数值；也就是说，捕捉到任何可能的无效值。类似其它语言中的 default 
+	  
+	  注意：还可以使用竖线字符作为分隔符，把多个模式结合起来([pattern [| pattern]...))		
 			
 			
 		
