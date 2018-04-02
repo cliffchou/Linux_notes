@@ -1975,8 +1975,79 @@ Linux is about imagination
 	  
 	  注意：还可以使用竖线字符作为分隔符，把多个模式结合起来([pattern [| pattern]...))		
 			
+	3)case 分支：倘若输入的变量与多个模式相匹配的话，case仅仅只会执行其中第一个匹配到的语句，然后终止运行。
+				 可以在每一个模式中添加 “;;&”，即可允许case语句继续执行下一条测试，而不是简单地终止运行。
+				 
+		   例如：case $REPLY in
+					[[:upper:]]) echo "'$REPLY' is upper case." ;;&
+					[[:lower:]]) echo "'$REPLY' is lower case." ;;&
+					[[:alpha:]]) echo "'$REPLY' is alphabetic." ;;&
+					[[:digit:]]) echo "'$REPLY' is a digit." ;;&
+					[[:graph:]]) echo "'$REPLY' is a visible character." ;;&
+					[[:punct:]]) echo "'$REPLY' is a punctuation symbol." ;;&
+					[[:space:]]) echo "'$REPLY' is a whitespace character." ;;&
+					[[:xdigit:]]) echo "'$REPLY' is a hexadecimal digit." ;;&
+				 esac
 			
-		
+32.位置参数：变量集合，该集合包含了命令行中所有独立的单词。
+       作用：位置参数被用来给 shell 脚本传递参数，也能够被用来给 shell 函数传递参数
+   			
+33.流程控制--for循环
+   1)for命令语法：
+     for variable [in words]; do
+		commands;
+	 done
+			
+	其中，variable是一个在循环执行期间会增加的变量，words是一个可选的条目列表，其值会按照顺序依次赋值给variable变量
+	
+   2)for 命令功能：我们可以通过许多有趣的方式创建 words 列表
+	 for i in {A..D}; do echo $i; done   
+			
+	 for i in distros*.txt; do echo $i; done   路径名展开		
+			
+   3)for命令语法2：
+     for (( expression1; expression2; expression3 )); do 
+		commands;
+	 done
+			
+	 其中，expression1， expression2，和 expression3 都是算术表达式，commands 是每次循环迭代时要执行的命令		
+	 expression1 用来初始化循环条件， expression2 用来决定循环结束的时间，还有在每次循环迭代的末尾会执行 expression3。		
+	 
+     例如：for (( i=0; i<5; i=i+1 )); do
+			   echo $i
+		   done	 
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			
 			
 			
