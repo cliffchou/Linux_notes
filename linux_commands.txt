@@ -1993,7 +1993,7 @@ Linux is about imagination
        作用：位置参数被用来给 shell 脚本传递参数，也能够被用来给 shell 函数传递参数
    			
 33.流程控制--for循环
-   1)for命令语法：
+   1)for命令语法1：
      for variable [in words]; do
 		commands;
 	 done
@@ -2017,25 +2017,54 @@ Linux is about imagination
 			   echo $i
 		   done	 
 			
+34.字符串和数字
+   1) ${parameter:-word}	
+      若 parameter 没有设置值或者为空，则展开结果便是 word 的值，若是 parameter 不为空，则展开结果是 parameter 的值
+ 
+      ${parameter:=word}
+      若 parameter 没有设置值或者为空，展开结果是word 的值，并且 word 的值会赋给 parameter，若是 parameter 不为空，则展开结果是 parameter 的值   
 			
+      ${parameter:?word}
+      若 parameter 没有设置值或者为空，这种展开会导致脚本因为错误而退出，并且会将 word 的内容发送给标准错误，若parameter 不为空，展开结果是parameter 的值   
 			
+      ${prameter:+word}	
+      若 parameter 没有设置值或者为空，则展开结果为空，若parameter 不为空，展开结果是 word 的值将 parameter 的值替换掉，但是实际上 parameter 的值并不会改变    
 			
+   2) 返回变量名
+      ${!prefix*} 和 ${!prefix@}
+	  这种展开会返回以 prefix 开头的已有变量名		
 			
+	  ${#parameter}	
+      字符串展开，展开成由 parameter 所包含的字符串的长度	
+      注意：若 parameter 是 @ 或者 * 的话，则展开结果就是位置参数的个数
+
+	  ${parameter:offset} 和 ${parameter:offset:length}
+	  从 parameter 所包含的字符串中提取一部分字符(从第 offset 个字符开始，除非指定提取长度，否则就直到字符串的末尾)
+	  注意：offset是计算字符的，多个空格算一个，字符串的字符计数是从0开始的。比如，，"This    string is long"，则第5个字符是s开始的。
+	        若 offset 是负数，则认为 offset 值是从字符串的末尾开始算起的，这时字符串计数是从-1开始的，注意负数前面必须有一个空格(${foo: -5})，并且末尾开始的包含第 offset 个字符值。
 			
+	  ${parameter#pattern}    清除最短匹配
+      ${parameter##pattern}   清除最长匹配 
+      清除 parameter 包含的字符串中开头被 pattern 所匹配的那一部分文本	  
+	  例如：$ foo=file.txt.zip		
+	        $ echo ${foo#*.}
 			
+	  ${parameter%pattern}
+      ${parameter%%pattern}		
+	  这些展开和上面的 # 是一样的，不过它们清除的起始位置是从 parameter 所包含的字符串的末尾开始的
+	  例如：$ foo=file.txt.zip
+        	$ echo ${foo%.*}
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+	  ${parameter/pattern/string}
+	  ${parameter//pattern/string}
+	  ${parameter/#pattern/string}
+	  ${parameter/%pattern/string}		
+	  对 parameter 的内容执行查找和替换操作，如果找到了通配符 pattern 的匹配文本，则用 string 的内容来替换它
+      /  正常情况下，只有第一个匹配项会被替换掉	  
+	  // 该形式下，所有的匹配项都会被替换掉 		
+	  /# 要求匹配项出现在字符串开头		
+	  /% 要求匹配项出现在字符串的末尾		
+	  注意：/string 一旦被省略了，则会导致匹配的文本内容被删除		
 			
 			
 			
